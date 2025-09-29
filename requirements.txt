@@ -1,10 +1,8 @@
 streamlit
-plotly
-requests
 pandas
-numpy
-pandas
-streamlit
 numpy
 numpy-financial
 plotly
+fpdf
+sqlite3-binary
+psutil
