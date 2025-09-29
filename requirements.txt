@@ -3,3 +3,8 @@ plotly
 requests
 pandas
 numpy
+pandas
+streamlit
+numpy
+numpy-financial
+plotly
