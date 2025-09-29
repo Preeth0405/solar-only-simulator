@@ -25,7 +25,7 @@ with st.sidebar:
     # Login logic
     if not st.session_state.authenticated:
         password = st.text_input("Enter password", type="password")
-        if password == "pushpower123":
+        if password == "preeth":
             st.session_state.authenticated = True
             st.rerun()
     else:
