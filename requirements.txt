@@ -4,5 +4,4 @@ numpy
 numpy-financial
 plotly
 fpdf
-sqlite3-binary
 psutil
