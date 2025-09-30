@@ -15,8 +15,8 @@ from datetime import datetime
 st.set_page_config(layout="wide")
 
 with st.sidebar:
-    st.header("🔒 Secure Login")
     st.image("logo.png",width = 150)
+    st.header("🔐 Secure Login")
 
     # Initialize session state
     if "authenticated" not in st.session_state:
@@ -29,8 +29,8 @@ with st.sidebar:
             st.session_state.authenticated = True
             st.rerun()
     else:
-        st.success("➜]  Logged in")
-        if st.button("⏻ Logout"):
+        st.success("🔓 Logged in")
+        if st.button("🚪 Logout"):
             st.session_state.authenticated = False
             st.rerun()
 
@@ -40,12 +40,12 @@ if not st.session_state.authenticated:
     st.stop()
 
 
-st.title("ðŸ”† Solar System Simulation + 25-Year Financial Model")
+st.title("🔆 Solar System Simulation + 25-Year Financial Model")
 
 # --- Upload/Download Input Parameters ---
-st.sidebar.title("ðŸ’¾ Save or Load Inputs")
+st.sidebar.title("💾 Save or Load Inputs")
 
-uploaded_params = st.sidebar.file_uploader("ðŸ“¤ Upload Parameters (.json)", type="json")
+uploaded_params = st.sidebar.file_uploader("📤 Upload Parameters (.json)", type="json")
 if uploaded_params:
     uploaded_config = json.load(uploaded_params)
     for k, v in uploaded_config.items():
@@ -110,9 +110,9 @@ with col3:
 st.header("3. Utility Tariff Inputs")
 col1, col2 = st.columns(2)
 with col1:
-    import_rate = st.number_input("Import rate (Â£/kWh)", min_value=0.1, value=st.session_state.get("import_rate", 0.25),step=0.01, help = "Import rate of the electricity")
+    import_rate = st.number_input("Import rate (£/kWh)", min_value=0.1, value=st.session_state.get("import_rate", 0.25),step=0.01, help = "Import rate of the electricity")
 with col2:
-    export_rate = st.number_input("Export rate (Â£/kWh)", min_value=0.01,value=st.session_state.get("export_rate", 0.05), step=0.005, help = "Export rate of the electricity")
+    export_rate = st.number_input("Export rate (£/kWh)", min_value=0.01,value=st.session_state.get("export_rate", 0.05), step=0.005, help = "Export rate of the electricity")
 
 # --- Financial Parameters ---
 st.header("4. Financial Assumptions")
@@ -134,36 +134,36 @@ with col2:
     esc_year = st.number_input("Electricity Inflation from year ", value=st.session_state.get("esc_year", 8.0))
 
 # --- Save Current Input Parameters ---
-if st.sidebar.button("ðŸ“¥ Save Inputs", help = " To save the Inputs to the local server"):
+if st.sidebar.button("📥 Save Inputs", help = " To save the Inputs to the local server"):
     input_params = {
         "dc_size": dc_size,
         "base_dc_size": base_dc_size,
         "inverter_size":inverter_size,
-        "inverter_eff": inverter_eff*100,
+        "inverter_eff": inverter_eff,
         "export_limit": export_limit,
         "import_rate": import_rate,
         "export_rate": export_rate,
         "capex_per_kw": capex_per_kw,
-        "o_and_m_rate": o_and_m_rate*100,
+        "o_and_m_rate": o_and_m_rate,
         "apply_degradation": apply_degradation,
-        "degradation_rate": degradation_rate*100,
-        "import_esc": import_esc*100,
-        "export_esc": export_esc*100,
-        "inflation": inflation*100,
+        "degradation_rate": degradation_rate,
+        "import_esc": import_esc,
+        "export_esc": export_esc,
+        "inflation": inflation,
         "esc_year":esc_year
     }
 
     json_string = json.dumps(input_params, indent=2)
-    st.sidebar.download_button("â¬‡ï¸ Download Inputs", json_string, file_name="saved_inputs.json", mime="application/json",help= "Download the Inputs to the local server")
+    st.sidebar.download_button("⬇️ Download Inputs", json_string, file_name="saved_inputs.json", mime="application/json",help= "Download the Inputs to the local server")
 
 # --- Save Project to Database ---
-st.sidebar.title("ðŸ—‚ Project Management")
+st.sidebar.title("🗂 Project Management")
 
 # Text input for project name
 project_name = st.sidebar.text_input("Project Name")
 
 # Save Project button
-if st.sidebar.button("ðŸ’¾ Save Project"):
+if st.sidebar.button("💾 Save Project"):
     if not project_name:
         st.sidebar.error("Please enter a project name.")
     elif not load_file or not pv_file:
@@ -205,12 +205,12 @@ if st.sidebar.button("ðŸ’¾ Save Project"):
 
 # --- Load Project from Database ---
 st.sidebar.markdown("---")
-st.sidebar.subheader("ðŸ“‚ Load Existing Project")
+st.sidebar.subheader("📂 Load Existing Project")
 
 # Get list of project names
 selected_project = get_project_dropdown()
 
-if st.sidebar.button("ðŸ“¥ Load Project") and selected_project:
+if st.sidebar.button("📥 Load Project") and selected_project:
     # Fetch project data
     cursor.execute("""
     SELECT csv_load, csv_pv, input_params
@@ -244,7 +244,7 @@ if st.sidebar.button("ðŸ“¥ Load Project") and selected_project:
             st.dataframe(pv_df)
 
 # --- Delete Project ---
-if st.sidebar.button("ðŸ—‘ï¸ Delete Project") and selected_project:
+if st.sidebar.button("🗑️ Delete Project") and selected_project:
     confirm = st.sidebar.checkbox(f"Confirm delete '{selected_project}'")
 
     if confirm:
@@ -256,7 +256,7 @@ if st.sidebar.button("ðŸ—‘ï¸ Delete Project") and selected_project:
 
 # --- Run Simulation ---
 if load_file and pv_file:
-    # Check if load_file is BytesIO â†’ handle both cases
+    # Check if load_file is BytesIO → handle both cases
     if isinstance(load_file, io.BytesIO):
         load_file.seek(0)
         load_df = pd.read_csv(load_file)
@@ -315,7 +315,7 @@ if load_file and pv_file:
     imported_from_grid = total_import/total_load
 
 
-    with st.expander("â˜€ï¸Solar Simulation ResultsðŸ“Š", expanded=True):
+    with st.expander("☀️Solar Simulation Results📊", expanded=True):
         row1 = st.columns(4)
         row1[0].metric("Total PV Production (kWh)", f"{total_pv:.2f}")
         row1[1].metric("Grid Import (kWh)", f"{total_import:.2f}")
@@ -360,7 +360,7 @@ if load_file and pv_file:
     pv_prod_color = st.sidebar.color_picker("PV Production", "#636EFA")
     pv_to_load_color = st.sidebar.color_picker("PV to Load", "#00CC96")
 
-    with st.expander("ðŸ“ŠCharts & GraphsðŸ“‰", expanded=False):
+    with st.expander("📊Charts & Graphs📉", expanded=False):
 
         fig1 = px.line(daily_summary, x='Time', y=['Load', 'PV_Prod', 'PV_to_Load'], title="Daily Load vs PV",color_discrete_map={
         'Load': load_color,
@@ -398,12 +398,12 @@ if load_file and pv_file:
         if y == 0:
             cashflow.append({
                 "Year": 0,
-                "System Price (Â£)": -initial_capex,
-                "O&M Costs (Â£)": 0,
-                "Net Bill Savings (Â£)": 0,
-                "Export Income (Â£)": 0,
-                "Annual Cash Flow (Â£)": -initial_capex,
-                "Cumulative Cash Flow (Â£)": -initial_capex,
+                "System Price (£)": -initial_capex,
+                "O&M Costs (£)": 0,
+                "Net Bill Savings (£)": 0,
+                "Export Income (£)": 0,
+                "Annual Cash Flow (£)": -initial_capex,
+                "Cumulative Cash Flow (£)": -initial_capex,
                 "PV Production":pv_after_losses,
                 "Export Energy":total_export,
                 "Import rates":import_rate,
@@ -429,12 +429,12 @@ if load_file and pv_file:
 
         cashflow.append({
             "Year": y,
-            "System Price (Â£)": -initial_capex if y == 0 else 0,
-            "O&M Costs (Â£)": -om if y > 0 else 0,
-            "Net Bill Savings (Â£)": savings,
-            "Export Income (Â£)": export_income,
-            "Annual Cash Flow (Â£)": annual_cashflow,
-            "Cumulative Cash Flow (Â£)": cumulative,
+            "System Price (£)": -initial_capex if y == 0 else 0,
+            "O&M Costs (£)": -om if y > 0 else 0,
+            "Net Bill Savings (£)": savings,
+            "Export Income (£)": export_income,
+            "Annual Cash Flow (£)": annual_cashflow,
+            "Cumulative Cash Flow (£)": cumulative,
             "PV Production":pv_prod,
             "Export Energy":pv_export,
             "Import rates":imp_price,
@@ -442,15 +442,15 @@ if load_file and pv_file:
         })
 
     fin_df = pd.DataFrame(cashflow)
-    irr = npf.irr(fin_df['Annual Cash Flow (Â£)'])
-    roi = (fin_df['Cumulative Cash Flow (Â£)'].iloc[-1] + initial_capex) / initial_capex
+    irr = npf.irr(fin_df['Annual Cash Flow (£)'])
+    roi = (fin_df['Cumulative Cash Flow (£)'].iloc[-1] + initial_capex) / initial_capex
 
     payback = None
     payback_display = "Not achieved"
     for i in range(1, len(fin_df)):
-        if fin_df.loc[i, 'Cumulative Cash Flow (Â£)'] >= 0:
-            prev_cum = fin_df.loc[i - 1, 'Cumulative Cash Flow (Â£)']
-            annual_cash = fin_df.loc[i, 'Annual Cash Flow (Â£)']
+        if fin_df.loc[i, 'Cumulative Cash Flow (£)'] >= 0:
+            prev_cum = fin_df.loc[i - 1, 'Cumulative Cash Flow (£)']
+            annual_cash = fin_df.loc[i, 'Annual Cash Flow (£)']
             if annual_cash != 0:
                 payback = i - 1 + abs(prev_cum) / annual_cash
                 years = int(payback)
@@ -461,32 +461,32 @@ if load_file and pv_file:
     lcoe = initial_capex / sum([total_pv * d for d in degradation_factors[1:]])
 
     col1, col2, col3, col4, col5 = st.columns(5)
-    col1.metric("Initial Capex (Â£)", f"{initial_capex:,.2f}")
+    col1.metric("Initial Capex (£)", f"{initial_capex:,.2f}")
     col2.metric("Payback Period", payback_display)
     col3.metric("ROI (%)", f"{roi * 100:.2f}")
     col4.metric("IRR (%)", f"{irr * 100:.2f}")
-    col5.metric("LCOE (Â£/kWh)", f"{lcoe:.2f}")
+    col5.metric("LCOE (£/kWh)", f"{lcoe:.2f}")
 
-    with st.expander("ðŸ“‹ Show Cash Flow Table"):
+    with st.expander("📋 Show Cash Flow Table"):
         st.dataframe(fin_df.style.format({
-            "System Price (Â£)": "Â£{:,.2f}",
-            "O&M Costs (Â£)": "Â£{:,.2f}",
-            "Net Bill Savings (Â£)": "Â£{:,.2f}",
-            "Export Income (Â£)": "Â£{:,.2f}",
-            "Annual Cash Flow (Â£)": "Â£{:,.2f}",
-            "Cumulative Cash Flow (Â£)": "Â£{:,.2f}"
+            "System Price (£)": "£{:,.2f}",
+            "O&M Costs (£)": "£{:,.2f}",
+            "Net Bill Savings (£)": "£{:,.2f}",
+            "Export Income (£)": "£{:,.2f}",
+            "Annual Cash Flow (£)": "£{:,.2f}",
+            "Cumulative Cash Flow (£)": "£{:,.2f}"
         }))
 
-    with st.expander("ðŸ’°Financial ChartðŸ“ˆ"):
-     st.plotly_chart(px.bar(fin_df[1:], x='Year', y='Annual Cash Flow (Â£)', title="Annual Cash Flow"), use_container_width=True)
-     st.plotly_chart(px.line(fin_df[1:], x='Year', y='Cumulative Cash Flow (Â£)', title="Cumulative Cash Flow"), use_container_width=True)
+    with st.expander("💰Financial Chart📈"):
+     st.plotly_chart(px.bar(fin_df[1:], x='Year', y='Annual Cash Flow (£)', title="Annual Cash Flow"), use_container_width=True)
+     st.plotly_chart(px.line(fin_df[1:], x='Year', y='Cumulative Cash Flow (£)', title="Cumulative Cash Flow"), use_container_width=True)
 
     csv = fin_df.to_csv(index=False).encode('utf-8')
     st.download_button("Download Cash Flow Table", csv, "cashflow_25yr.csv", "text/csv")
 
     simulate_batch =st.radio("Batch Simulation",["No","Yes"],index=0,horizontal = True)
     if simulate_batch == "Yes":
-        with st.expander("ðŸ“Š Batch Simulation (Compare Multiple Systems)", expanded=False):
+        with st.expander("📊 Batch Simulation (Compare Multiple Systems)", expanded=False):
             num_systems = st.number_input("How many systems to compare?", min_value=2, max_value=100, value=3, step=1)
             dc_num = st.number_input("DC increment ?", min_value = 10, max_value = 100, value = 10, step = 10)
             ac_num = st.number_input("AC increment ?", min_value = 10, max_value = 100, value = 10, step = 10)
@@ -557,7 +557,7 @@ if load_file and pv_file:
 
             comparison_results.append({
                 "System": f"System {i+1}",
-                "Capex (Â£)": f"Â£{capex:,.0f}",
+                "Capex (£)": f"£{capex:,.0f}",
                 "DC Size (kW)": f"{dc:,.0f}",
                 "AC Size (kW)": f"{ac:,.0f}",
                 "Export Limit (kW)": exp_limit,
@@ -570,16 +570,16 @@ if load_file and pv_file:
                 "IRR (%)": round(irr * 100, 1) if irr is not None else "N/A",
             })
 
-        st.subheader("ðŸ“‹ Batch Comparison Table")
+        st.subheader("📋 Batch Comparison Table")
         comp_df = pd.DataFrame(comparison_results)
         st.dataframe(comp_df)
 
-        st.subheader("ðŸ“ˆ Compare Metric Across Systems")
-        metric_option = st.selectbox("Select Metric to Plot", ["Payback (yrs)", "ROI (%)", "IRR (%)", "LCOE (Â£/kWh)"])
+        st.subheader("📈 Compare Metric Across Systems")
+        metric_option = st.selectbox("Select Metric to Plot", ["Payback (yrs)", "ROI (%)", "IRR (%)", "LCOE (£/kWh)"])
         fig = px.bar(comp_df, x="System", y=metric_option, title=f"{metric_option} Comparison")
         st.plotly_chart(fig, use_container_width=True)
 
-    with st.expander("â™»ï¸CarbonðŸ­"):
+    with st.expander("♻️Carbon🏭"):
         carbon_index = 0.20705
         before_project = total_load * carbon_index
         after_project = total_import * carbon_index
@@ -589,28 +589,28 @@ if load_file and pv_file:
 
         col1, col2,col3,col4,col5,col6,col7 = st.columns(7)
         with col1:
-            st.metric(f"Before Project âš¡ï¸({carbon_units})",f"{before_project/carbon_unit:,.2f} ")
+            st.metric(f"Before Project ⚡️({carbon_units})",f"{before_project/carbon_unit:,.2f} ")
             st.image("https://img.icons8.com/ios-filled/100/000000/co2.png",width=60)
         with col2:
-            st.metric(f"After Project ðŸŒž({carbon_units})", f"{after_project / carbon_unit:,.2f} ")
+            st.metric(f"After Project 🌞({carbon_units})", f"{after_project / carbon_unit:,.2f} ")
             st.image("https://img.icons8.com/ios-filled/100/000000/solar-panel.png", width=60)
         with col3:
-            st.metric(f"Carbon Saved â™»ï¸({carbon_units})", f"{carbon_saved / carbon_unit:,.2f} ")
+            st.metric(f"Carbon Saved ♻️({carbon_units})", f"{carbon_saved / carbon_unit:,.2f} ")
             st.image("https://img.icons8.com/external-flaticons-lineal-color-flat-icons/64/external-carbon-footprint-lifestyles-flaticons-lineal-color-flat-icons.png",width=60)
         with col4:
-            st.metric(f"Trees Saved ðŸŒ´",f"{carbon_saved/22:,.0f}")
+            st.metric(f"Trees Saved 🌴",f"{carbon_saved/22:,.0f}")
             st.image("https://img.icons8.com/clouds/100/bonsai.png",width=60)
         with col5:
-            st.metric("Cars off the Road ðŸš˜",f"{carbon_saved/1900:,.0f}")
+            st.metric("Cars off the Road 🚘",f"{carbon_saved/1900:,.0f}")
             st.image("https://img.icons8.com/plasticine/100/traffic-jam.png",width=60)
         with col6:
-            st.metric("Miles Driven ðŸ›£",f"{carbon_saved/0.168:,.0f}")
+            st.metric("Miles Driven 🛣",f"{carbon_saved/0.168:,.0f}")
             st.image("https://img.icons8.com/emoji/48/motorway.png",width=60)
         with col7:
-            st.metric("Homes Powered ðŸ¡",f"{carbon_saved/2800:,.0f}")
+            st.metric("Homes Powered 🏡",f"{carbon_saved/2800:,.0f}")
             st.image("https://img.icons8.com/color/48/mansion.png",width=60)
 
-    with st.expander("ðŸ“ˆAverage ProfileðŸ“‰"):
+    with st.expander("📈Average Profile📉"):
         avg_df = avg_profile \
         .merge(avg_production, on = "Hour")\
         .merge(avg_pv_to_load, on = "Hour")\
@@ -634,10 +634,10 @@ if load_file and pv_file:
 
     monthly["Month"] = monthly["Month"].astype(str)
 
-    with st.expander("ðŸ“… Monthly Summary Table", expanded=False):
+    with st.expander("📅 Monthly Summary Table", expanded=False):
         st.dataframe(monthly)
 
-    with st.expander("ðŸ“… Monthly Summary Chart", expanded=False):
+    with st.expander("📅 Monthly Summary Chart", expanded=False):
 
         monthly["Grid Before"] = monthly["Load (kWh)"]
         monthly["Grid After"] = monthly["Grid (kWh)"]
@@ -728,11 +728,11 @@ if load_file and pv_file:
         bill_fig.update_layout(
             title="Approximate Electricity Bill - Year 1",
             xaxis_title="Month",
-            yaxis_title="Cost (Â£)",
+            yaxis_title="Cost (£)",
             barmode='group',  # for side-by-side bars
             template="plotly_dark",  # or "simple_white" for white background
             height=450,
-            yaxis_tickprefix="Â£",
+            yaxis_tickprefix="£",
             legend=dict(orientation="h", y=-0.2)
         )
 
@@ -742,7 +742,7 @@ if load_file and pv_file:
 
         fig_donut.update_layout(title = "Energy Source",template="plotly_dark",showlegend=True,height=450)
 
-        fig_carbon = go.Figure(data=[go.Pie(labels=["Before","After"],values = [(before_project/1000),(after_project/1000)],hole =0.5,marker = dict(colors=["858F85","#543053"]),texttemplate = "<br>%{value:.2f} tCOâ‚‚",textinfo="value",insidetextorientation="horizontal")])
+        fig_carbon = go.Figure(data=[go.Pie(labels=["Before","After"],values = [(before_project/1000),(after_project/1000)],hole =0.5,marker = dict(colors=["858F85","#543053"]),texttemplate = "<br>%{value:.2f} tCO₂",textinfo="value",insidetextorientation="horizontal")])
         fig_carbon.update_layout(title = "Carbon Emissions",template="plotly_dark",showlegend=True,height=450)
 
         col1,col2 = st.columns(2)
@@ -750,162 +750,6 @@ if load_file and pv_file:
             st.plotly_chart(fig_donut, use_container_width=True)
         with col2:
             st.plotly_chart(fig_carbon, use_container_width=True)
-
-
-
-        # --- AI Optimisation Section ---
-        st.header("🔎 AI Optimisation (with Constraints & Metric Choice)")
-
-        import random
-
-        # --- User-defined ranges ---
-        st.subheader("Constraint Settings")
-
-        # PV system size
-        pv_min = st.number_input("Min PV Size (kWp)", value=0.8*base_dc_size, step=1.0)
-        pv_max = st.number_input("Max PV Size (kWp)", value=1.5*base_dc_size, step=1.0)
-
-        # Self-consumption
-        sc_min = st.number_input("Min Self-Consumption (%)", value=50.0, step=1.0)
-        sc_max = st.number_input("Max Self-Consumption (%)", value=100.0, step=1.0)
-
-        # Export %
-        exp_min = st.number_input("Min Export (%)", value=0.0, step=1.0)
-        exp_max = st.number_input("Max Export (%)", value=50.0, step=1.0)
-
-        # DC/AC Ratio
-        dcr_min = st.number_input("Min DC/AC Ratio", value=1.0, step=0.1)
-        dcr_max = st.number_input("Max DC/AC Ratio", value=1.5, step=0.1)
-
-        # Payback
-        pb_min = st.number_input("Min Payback (yrs)", value=0.0, step=1.0)
-        pb_max = st.number_input("Max Payback (yrs)", value=20.0, step=1.0)
-
-        # Export limit range (kW)
-        exp_limit_min = st.number_input("Min Export Limit (kW)", value=5.0, step=1.0)
-        exp_limit_max = st.number_input("Max Export Limit (kW)", value=float(inverter_size), step=1.0)
-
-        # Optimisation metric
-        optimise_for = st.selectbox(
-            "Optimise for:",
-            ["IRR (%)", "Payback (yrs)", "Self-Use (%)", "Site Consumption (%)", "Export (%)", "DC/AC Ratio"]
-        )
-
-        # --- Simulation Function ---
-        def run_simulation_once(dc_size, inverter_size, export_limit):
-            inverter_size = round(inverter_size)
-            export_limit = round(export_limit)
-
-            scaling_factor = dc_size / base_dc_size
-            temp_df = pd.DataFrame()
-            temp_df['Load'] = df['Load']
-            temp_df['PV_base'] = df['PV_base']
-            temp_df['PV_Prod'] = df['PV_base'] * scaling_factor
-            temp_df['Inv_Limit'] = inverter_size
-            temp_df['E_Inv'] = temp_df[['PV_Prod', 'Inv_Limit']].min(axis=1)
-            temp_df['E_Use'] = temp_df['E_Inv'] * inverter_eff
-            temp_df['PV_to_Load'] = temp_df[['E_Use', 'Load']].min(axis=1)
-            temp_df['Import'] = (temp_df['Load'] - temp_df['PV_to_Load']).clip(lower=0)
-            temp_df['Export'] = (temp_df['E_Use'] - temp_df['PV_to_Load']).clip(lower=0).clip(upper=export_limit)
-
-            pv_self = temp_df['PV_to_Load'].sum()
-            pv_export = temp_df['Export'].sum()
-            total_pv = temp_df['PV_Prod'].sum()
-            total_load = temp_df['Load'].sum()
-
-            capex = dc_size * capex_per_kw
-            om_cost = capex * o_and_m_rate
-            net_annual = pv_self * import_rate + pv_export * export_rate - om_cost
-            irr = npf.irr([-capex] + [net_annual] * 25)
-
-            # Payback
-            cum_cash = -capex
-            payback = None
-            for yr in range(1, 26):
-                cum_cash += net_annual
-                if cum_cash >= 0:
-                    payback = yr
-                    break
-
-            # Ratios
-            self_use_pct = (pv_self / total_pv * 100) if total_pv > 0 else 0
-            site_consumption_pct = (pv_self / total_load * 100) if total_load > 0 else 0
-            export_pct = (pv_export / total_pv * 100) if total_pv > 0 else 0
-            dc_ac_ratio = dc_size / inverter_size if inverter_size > 0 else None
-
-            return {
-                "DC Size (kW)": round(dc_size, 1),
-                "Inverter Size (kW)": inverter_size,
-                "Export Limit (kW)": export_limit,
-                "IRR (%)": irr * 100 if irr else None,
-                "Payback (yrs)": payback,
-                "Self-Use (%)": self_use_pct,
-                "Site Consumption (%)": site_consumption_pct,
-                "Export (%)": export_pct,
-                "DC/AC Ratio": dc_ac_ratio
-            }
-
-        # --- Optimiser Loop ---
-        def optimise_system(trials=200):
-            best = None
-            history = []
-            for _ in range(trials):
-                dc = random.uniform(pv_min, pv_max)
-                inv = random.uniform(0.6*dc, 1.0*dc)
-                exp = random.uniform(exp_limit_min, min(exp_limit_max, inv, dc))  # fix export ≤ inverter ≤ DC
-
-                result = run_simulation_once(dc, inv, exp)
-                history.append(result)
-
-                # Apply constraints
-                valid = True
-                valid &= pv_min <= result["DC Size (kW)"] <= pv_max
-                valid &= sc_min <= result["Self-Use (%)"] <= sc_max
-                valid &= exp_min <= result["Export (%)"] <= exp_max
-                valid &= dcr_min <= result["DC/AC Ratio"] <= dcr_max
-                if result["Payback (yrs)"] is not None:
-                    valid &= pb_min <= result["Payback (yrs)"] <= pb_max
-
-                if not valid:
-                    continue
-
-                # --- Optimisation metric selection ---
-                if best is None:
-                    best = result
-                else:
-                    if optimise_for in ["IRR (%)", "Self-Use (%)", "Site Consumption (%)"]:
-                        if result[optimise_for] > best[optimise_for]:
-                            best = result
-                    elif optimise_for in ["Export (%)", "Payback (yrs)"]:
-                        if result[optimise_for] < best[optimise_for]:
-                            best = result
-                    elif optimise_for == "DC/AC Ratio":
-                        if abs(result["DC/AC Ratio"] - round(result["DC/AC Ratio"])) < abs(best["DC/AC Ratio"] - round(best["DC/AC Ratio"])):
-                            best = result
-
-            return best, pd.DataFrame(history)
-
-        # --- Run Button ---
-        if st.button("🚀 Run Optimiser"):
-            best_sol, hist_df = optimise_system(trials=200)
-            if best_sol:
-                st.success(f"Best System Found ({optimise_for} within constraints) → "
-                           f"DC {best_sol['DC Size (kW)']} kW, "
-                           f"Inverter {best_sol['Inverter Size (kW)']} kW, "
-                           f"Export {best_sol['Export Limit (kW)']} kW, "
-                           f"{optimise_for} = {best_sol[optimise_for]:.2f}")
-            else:
-                st.error("No system found that meets your constraints.")
-
-            st.subheader("Optimisation History")
-            st.dataframe(hist_df)
-            if optimise_for in hist_df.columns:
-                st.line_chart(hist_df[optimise_for])
-
-
-
-
-
 
         import psutil
         import os
